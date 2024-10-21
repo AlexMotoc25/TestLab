@@ -11,6 +11,6 @@ prima_parte =sir[: nr_char_prima_parte].upper().strip()
 
 
 
-parte_doi =sir[nr_char_prima_parte :][:: -1].capitalize().replace(",", "")
+parte_doi =sir[nr_char_prima_parte :][::-1].replace(",", "")
 print(prima_parte, parte_doi)
 
