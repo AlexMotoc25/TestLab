@@ -35,7 +35,7 @@ else:
     print("nu mai exista papanasi")
     
 print(f"Mai sunt {len(tavi)} tavi")
-print(f"S-au comandat {istoric_comenzi.count("ceafa")} cefe, {istoric_comenzi.count("guias")} guias si {istoric_comenzi.count("papanasi")} papanasi")
+print(f'S-au comandat {istoric_comenzi.count("ceafa")} cefe, {istoric_comenzi.count("guias")} guias si {istoric_comenzi.count("papanasi")} papanasi')
 
 def bani_facuti():
     bani_papanasi = preturi[0][1] * istoric_comenzi.count("papanasi")
