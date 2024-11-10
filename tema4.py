@@ -6,21 +6,35 @@ progres = ["_" for _ in cuvant_de_ghicit]
 incercari_ramase = 6
 litere_incercate = []
 
+
 while "_" in progres:
     print("".join(progres))
-    l = input("").lower()
+    l = input("Introdu o litera:").lower()
+    
+    if not l.isalpha() or len(l) != 1:
+        print("Te rog sa introduci doar o litera.")
+        continue
+    
+    if l in litere_incercate:
+        print("Ai incercat deja aceasta litera")
+        continue
+    
     litere_incercate.append(l)
-    print(f'ai incercat {litere_incercate}')
-        
+    
     if l in cuvant_de_ghicit:
+        print(f'Ai incercat {litere_incercate}')
         for i in range(len(cuvant_de_ghicit)):
             if cuvant_de_ghicit[i] == l:
                 progres[i]= l
-                
     else:
         incercari_ramase -= 1
-        print('litera gresita')
-        print(f'mai ai {incercari_ramase} incercari')
+        print('Litera gresita')
+        print(f'Ai incercat {litere_incercate}')
+        print(f'Mai ai {incercari_ramase} incercari')
         if incercari_ramase == 0:
-            print(f"Ai pierdut, cuvantul era:{cuvant_de_ghicit}")
+            print(f"Ai pierdut! Cuvântul era:{cuvant_de_ghicit}")
             break
+        
+    if "_" not in progres:
+        print(f"Felicitări! Ai ghicit cuvântul:{cuvant_de_ghicit}")
+        break
