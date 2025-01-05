@@ -1,0 +1,133 @@
+from tkinter import *
+from tkinter import ttk
+import random
+
+is_paused = False
+is_running = False
+
+def bubble(data, drawData, timer):
+    global is_paused, is_running
+    n = len(data)
+
+    def bubble_sort_step(i, j):
+        global is_paused, is_running
+
+        if not is_running:
+            drawData(data, ['Green' for x in range(len(data))])
+            return
+
+        if is_paused:
+            root.after(100, bubble_sort_step, i, j)
+            return
+
+        if j < n - i - 1:
+            if data[j] > data[j + 1]:
+                data[j], data[j + 1] = data[j + 1], data[j]
+            drawData(data, ['Green' if x == j + 1 else 'Red' for x in range(len(data))])
+            root.after(int(timer * 1000), bubble_sort_step, i, j + 1)
+        elif i + 1 < n:
+            drawData(data, ['Green' if x >= n - i - 1 else 'Red' for x in range(len(data))])
+            root.after(int(timer * 1000), bubble_sort_step, i + 1, 0)
+        else:
+            drawData(data, ['Green' for x in range(len(data))])
+            is_running = False
+
+    bubble_sort_step(0, 0)
+
+def generate():
+    global data, is_running
+    if is_running:
+        return
+    minval = int(minEntry.get())
+    maxval = int(maxEntry.get())
+    sizeval = int(sizeEntry.get())
+    data = [random.randrange(minval, maxval + 1) for _ in range(sizeval)]
+    drawData(data, ['Red' for x in range(len(data))])
+
+def drawData(data, colorlist):
+    canvas.delete("all")
+    can_height = 400
+    can_width = 580
+    x_width = can_width / (len(data) + 1)
+    offset = 10
+    spacing = 1
+    normalized_data = [i / max(data) for i in data]
+    for i, height in enumerate(normalized_data):
+        x0 = i * x_width + offset + spacing
+        y0 = can_height - height * 380
+        x1 = ((i + 1) * x_width) + offset
+        y1 = can_height
+        canvas.create_rectangle(x0, y0, x1, y1, fill=colorlist[i])
+        canvas.create_text(x0 + 2, y0, anchor=SE, text=str(data[i]))
+    root.update_idletasks()
+
+def start_algorithm():
+    global is_paused, is_running
+    if is_running:
+        return
+    is_paused = False
+    is_running = True
+    bubble(data, drawData, 0)
+
+def pause_algo():
+    global is_paused
+    is_paused = True
+
+def resume_algo():
+    global is_paused
+    is_paused = False
+
+def stop_algo():
+    global is_running, is_paused
+    is_paused = False
+    is_running = False
+
+
+root = Tk()
+root.resizable(width=False, height=False)
+root.title("Vizualizator Bubble Sort")
+root.geometry("800x600")
+root.config(bg="#2c3e50")
+
+
+title_label = Label(root, text="Vizualizator Bubble Sort", font=("Comic", 20, "bold"), bg="#2c3e50", fg="white")
+title_label.pack(pady=10)
+
+
+controls_frame = Frame(root, width=200, bg="#34495e", padx=10, pady=10)
+controls_frame.pack(side=LEFT, fill=Y)
+
+
+canvas_frame = Frame(root, width=600, bg="white")
+canvas_frame.pack(side=RIGHT, fill=BOTH, expand=True)
+
+canvas = Canvas(canvas_frame, width=600, height=400, bg="white")
+canvas.pack(padx=10, pady=10)
+
+
+settings_frame = ttk.LabelFrame(controls_frame, text="Setări", padding=(10, 10))
+settings_frame.pack(pady=10, fill=X)
+
+sizeEntry = ttk.Scale(settings_frame, from_=3, to=60, orient=HORIZONTAL, length=150)
+sizeEntry.set(10)
+Label(settings_frame, text="Mărime").pack()
+sizeEntry.pack()
+
+minEntry = ttk.Scale(settings_frame, from_=0, to=10, orient=HORIZONTAL, length=150)
+minEntry.set(1)
+Label(settings_frame, text="Valoare minimă").pack()
+minEntry.pack()
+
+maxEntry = ttk.Scale(settings_frame, from_=10, to=100, orient=HORIZONTAL, length=150)
+maxEntry.set(50)
+Label(settings_frame, text="Valoare maximă").pack()
+maxEntry.pack()
+
+
+Button(controls_frame, text="Generază", bg="#8e44ad", fg="white", command=generate).pack(pady=10, fill=X)
+Button(controls_frame, text="Start", bg="#3498db", fg="white", command=start_algorithm).pack(pady=10, fill=X)
+Button(controls_frame, text="Pauză", bg="#f39c12", fg="white", command=pause_algo).pack(pady=10, fill=X)
+Button(controls_frame, text="Continuă", bg="#2ecc71", fg="white", command=resume_algo).pack(pady=10, fill=X)
+Button(controls_frame, text="Stop", bg="#e74c3c", fg="white", command=stop_algo).pack(pady=10, fill=X)
+
+root.mainloop()
